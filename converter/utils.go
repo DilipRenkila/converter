@@ -96,7 +96,6 @@ func RunConversion(amount int, currency string) (map[string]interface{},error) {
 	req.Header.Add("Accept", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
-		body["reason"] = "Internal Server Error"
 		return body,err
 	}
 

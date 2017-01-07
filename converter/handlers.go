@@ -81,7 +81,7 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w, err = outputWriter(w, body, contentType, http.StatusInternalServerError)
+	w, err = outputWriter(w, body, contentType, http.StatusOK)
 	if err != nil {
 		log.Printf("Error in encoding: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
