@@ -52,11 +52,11 @@ func CheckCurrency(s string, dest interface{}) error {
 		return fmt.Errorf("bad type for currency: %T", dest)
 	}
 	if len(s)!= 3 {
-		return fmt.Errorf("bad type for currency: %T ; should be a three letter string", dest)
+		return fmt.Errorf("bad type for currency: %v ; should be a three letter string", dest)
 	}
 	for _, r := range s {
 		if !unicode.IsLetter(r) {
-			return fmt.Errorf("bad type for currency: %T ; should be a three letter string", s)
+			return fmt.Errorf("bad type for currency: %v ; should be a three letter string", s)
 		}
 	}
 	*d = strings.ToUpper(s)
