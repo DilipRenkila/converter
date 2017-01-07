@@ -51,6 +51,9 @@ func CheckCurrency(s string, dest interface{}) error {
 	if !ok {
 		return fmt.Errorf("bad type for currency: %T", dest)
 	}
+	if len(s)!= 3 {
+		return fmt.Errorf("bad type for currency: %s; should be a three letter string", dest)
+	}
 	for _, r := range s {
 		if !unicode.IsLetter(r) {
 			return fmt.Errorf("bad type for currency: %s ; should be a three letter string", s)
