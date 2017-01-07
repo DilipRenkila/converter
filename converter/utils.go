@@ -38,8 +38,8 @@ func CheckAmount(s string, dest interface{}) error {
 		return fmt.Errorf("bad type for amount: %T", dest)
 	}
 	n, err := strconv.Atoi(s)
-	if err != nil && n > 0 {
-		return fmt.Errorf("bad type for amount: %v, give an integer", s)
+	if err != nil || n > 0 {
+		return fmt.Errorf("bad type for amount: %v, give a positive integer", s)
 	}
 	*d = n
 	return nil
