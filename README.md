@@ -1,10 +1,10 @@
 ## Currency Converter
 
-This repository provides an http api written in Golang that takes 
+This repository provides a http api in Golang that takes 
 the price in one currency and converts it to other currencies.
 
 This api provides a single endpoint `/convert?amount=<amount>&currency=<currency>` 
-that wraps up a call to fixer.io  to return a JSON or XML array of amounts converted to other currencies for a given ammount and currency.
+that wraps up a call to fixer.io  to return a JSON or XML array of amounts converted to other currencies for a given amount and currency type.
 
 ### Project Structure
 
