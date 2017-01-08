@@ -16,7 +16,7 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Accept")
 
 	// Parse the remote client information.
-	addr, proto, err := RestClientIP(r)
+	_, _, err := RestClientIP(r)
 	if err != nil {
 		log.Printf("Error in parsing Client's IP: %s", err)
 		body["reason"] = "Bad request type"
@@ -28,7 +28,7 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Request came from: %s by %s", addr, proto)
+	//log.Printf("Request came from: %s by %s", addr, proto)
 
 	// ParseForm parses the raw Request from the URL, returns err if it fails to parse.
 	if err := r.ParseForm(); err != nil {

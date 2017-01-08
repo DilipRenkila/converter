@@ -20,7 +20,7 @@ func init() {
 
 // TestArguments checks for missing arguments, bad currency and amount types.
 func TestArguments(t *testing.T) {
-
+	t.Log("checking for missing arguments, bad currency and amount types")
 	userURLs = []string{fmt.Sprintf("%s/convert", server.URL),
 		fmt.Sprintf("%s/convert?", server.URL),
 		fmt.Sprintf("%s/convert?amount=abcd", server.URL),
@@ -37,6 +37,8 @@ func TestArguments(t *testing.T) {
 		}
 		if res.StatusCode != 400 {
 			t.Errorf("Bad Request Type expected: %d", res.StatusCode)
+		}else{
+			t.Log("Success, Got 400")
 		}
 	}
 
@@ -44,7 +46,7 @@ func TestArguments(t *testing.T) {
 
 // TestConversionUnsupportedCurrency checks for conversion from unsupported currency.
 func TestConversionUnsupportedCurrency(t *testing.T) {
-
+	t.Log("Checking for conversion of unsupported currency")
 	url := fmt.Sprintf("%s/convert?amount=305&currency=USW", server.URL)
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Add("Accept", "application/xml")
@@ -54,13 +56,15 @@ func TestConversionUnsupportedCurrency(t *testing.T) {
 	}
 	if res.StatusCode != 400 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
+	}else{
+		t.Log("Success, Got 400")
 	}
 
 }
 
-// TestConversionToJSON checks for Successful listing of converted currencies in XML.
+// TestConversionToJSON checks for Successful listing of converted currencies in JSON.
 func TestConversionToJSON(t *testing.T) {
-
+	t.Log("checking for successful listing of converted currencies in JSON")
 	url := fmt.Sprintf("%s/convert?amount=305&currency=USD", server.URL)
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Add("Accept", "application/json")
@@ -70,13 +74,16 @@ func TestConversionToJSON(t *testing.T) {
 	}
 	if res.StatusCode != 200 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
+	}else{
+		t.Log("Success, Got 200")
 	}
+
 
 }
 
 // TestConversionToXML checks for Successful listing of converted currencies in XML.
 func TestConversionToXML(t *testing.T) {
-
+	t.Log("checking for successful listing of converted currencies in XML ")
 	url := fmt.Sprintf("%s/convert?amount=305&currency=USD", server.URL)
 	request, err := http.NewRequest("GET", url, nil)
 	request.Header.Add("Accept", "application/xml")
@@ -86,6 +93,8 @@ func TestConversionToXML(t *testing.T) {
 	}
 	if res.StatusCode != 200 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
+	}else{
+		t.Log("Success, Got 200")
 	}
 
 }
