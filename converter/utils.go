@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"log"
 )
 
 // Request is composed of a amount and currency used to store from http request.
@@ -61,6 +62,44 @@ func CheckCurrency(s string, dest interface{}) error {
 			return fmt.Errorf("bad type for currency: %s ; should be a three letter string", s)
 		}
 	}
+
+	// checks whether currency given by api client is supported or not.
+	client := &http.Client{Timeout: 5 * time.Second}
+	url := fmt.Sprintf("http://api.fixer.io/latest?base=%s", strings.ToUpper(s))
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Accept", "application/json")
+	Resp, err := client.Do(req)
+	if err != nil {
+
+		log.Printf("Error: %v",err)
+		return fmt.Println("Internal Server Error")
+	}
+
+	defer Resp.Body.Close()
+	if Resp.StatusCode != 200 {
+		url := fmt.Sprintf("http://api.fixer.io/latest")
+		req, err := http.NewRequest("GET", url, nil)
+		resp, err := client.Do(req)
+
+		if err != nil {
+			log.Printf("Error: %v",err)
+			return fmt.Println("Internal Server Error")
+		}
+
+		defer resp.Body.Close()
+		resp_body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Printf("Error: %v",err)
+			return fmt.Println("Internal Server Error")
+		}
+		x,err := decode(resp_body)
+		if err != nil {
+			log.Printf("Error: %v",err)
+			return fmt.Println("Internal Server Error")
+		}
+		return  fmt.Errorf("Requested Currency type : %s  is not supported. Select from %s", strings.ToUpper(s),KeysToString(x.Rates))
+	}
+
 	*d = strings.ToUpper(s)
 	return nil
 }
@@ -76,8 +115,8 @@ func ret(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
 
-// KeysString returns a interface of supported currencies by fixer.io
-func KeysString(m map[string]float64) map[string]interface{} {
+// KeysToString returns a interface of supported currencies by fixer.io
+func KeysToString(m map[string]float64) map[string]interface{} {
 	keys := make([]string, 0, len(m))
 	body := make(map[string]interface{})
 	for k := range m {

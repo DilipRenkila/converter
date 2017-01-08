@@ -1,83 +1,91 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/diliprenkila/converter/converter"
-	"github.com/stretchr/testify/assert"
 )
 
-type ReposTestClient struct {
-	Repos []repos.Repo
-	Err   error
+var (
+	server   *httptest.Server
+	userURLs []string
+)
+
+func init() {
+	//Creating a new http server with the user handlers.
+	server = httptest.NewServer(NewRouter())
+
 }
 
-func (c ReposTestClient) Get(string) ([]repos.Repo, error) {
-	return c.Repos, c.Err
+// TestArguments checks for missing arguments, bad currency and amount types.
+func TestArguments(t *testing.T) {
+
+	userURLs = []string{fmt.Sprintf("%s/convert", server.URL),
+		fmt.Sprintf("%s/convert?", server.URL),
+		fmt.Sprintf("%s/convert?amount=abcd", server.URL),
+		fmt.Sprintf("%s/convert?amount=-59", server.URL),
+		fmt.Sprintf("%s/convert?currency=njkkkk", server.URL),
+		fmt.Sprintf("%s/convert?currency=se&amount=24", server.URL),
+	}
+
+	for _, url := range userURLs {
+		request, err := http.NewRequest("GET", url, nil)
+		res, err := http.DefaultClient.Do(request)
+		if err != nil {
+			t.Error(err)
+		}
+		if res.StatusCode != 400 {
+			t.Errorf("Bad Request Type expected: %d", res.StatusCode)
+		}
+	}
+
 }
 
-func TestConvertCurrency(t *testing.T) {
-	assert := assert.New(t)
+// TestConversionUnsupportedCurrency checks for conversion from unsupported currency.
+func TestConversionUnsupportedCurrency(t *testing.T) {
 
-	tests := []struct {
-		description        string
-		reposClient        *ReposTestClient
-		url                string
-		expectedStatusCode int
-		expectedBody       string
-	}{
-		{
-			description:        "missing argument user",
-			reposClient:        &ReposTestClient{},
-			url:                "/repos",
-			expectedStatusCode: 400,
-			expectedBody:       "MISSING_ARG_USER\n",
-		}, {
-			description: "error getting repos",
-			reposClient: &ReposTestClient{
-				Repos: []repos.Repo{},
-				Err:   errors.New("fake test error"),
-			},
-			url:                "/user?user=fakeuser",
-			expectedStatusCode: 500,
-			expectedBody:       "INTERNAL_ERROR\n",
-		}, {
-			description: "no repos found",
-			reposClient: &ReposTestClient{
-				Repos: []repos.Repo{},
-				Err:   nil,
-			},
-			url:                "/user?user=fakeuser",
-			expectedStatusCode: 200,
-			expectedBody:       `[]`,
-		}, {
-			description: "succesfull query",
-			reposClient: &ReposTestClient{
-				Repos: []repos.Repo{
-					repos.Repo{Name: "test", Description: "a test"},
-				},
-				Err: nil,
-			},
-			url:                "/user?user=fakeuser",
-			expectedStatusCode: 200,
-			expectedBody:       `[{"name":"test","description":"a test"}]`,
-		},
-		// TODO not all cases are covered
+	url := fmt.Sprintf("%s/convert?amount=305&currency=USW", server.URL)
+	request, err := http.NewRequest("GET", url, nil)
+	request.Header.Add("Accept", "application/xml")
+	res, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Error(err)
+	}
+	if res.StatusCode != 400 {
+		t.Errorf("Error status code : %d is not expected", res.StatusCode)
 	}
 
-	for _, tc := range tests {
-		app := &App{repos: tc.reposClient}
+}
 
-		req, err := http.NewRequest("GET", tc.url, nil)
-		assert.NoError(err)
+// TestConversionToJSON checks for Successful listing of converted currencies in XML.
+func TestConversionToJSON(t *testing.T) {
 
-		w := httptest.NewRecorder()
-		app.GetReposHandler(w, req)
-
-		assert.Equal(tc.expectedStatusCode, w.Code, tc.description)
-		assert.Equal(tc.expectedBody, w.Body.String(), tc.description)
+	url := fmt.Sprintf("%s/convert?amount=305&currency=USD", server.URL)
+	request, err := http.NewRequest("GET", url, nil)
+	request.Header.Add("Accept", "application/json")
+	res, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Error(err)
 	}
+	if res.StatusCode != 200 {
+		t.Errorf("Error status code : %d is not expected", res.StatusCode)
+	}
+
+}
+
+// TestConversionToXML checks for Successful listing of converted currencies in XML.
+func TestConversionToXML(t *testing.T) {
+
+	url := fmt.Sprintf("%s/convert?amount=305&currency=USD", server.URL)
+	request, err := http.NewRequest("GET", url, nil)
+	request.Header.Add("Accept", "application/xml")
+	res, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Error(err)
+	}
+	if res.StatusCode != 200 {
+		t.Errorf("Error status code : %d is not expected", res.StatusCode)
+	}
+
 }

@@ -1,6 +1,4 @@
-/*
-apiserver is responsible for serving the currency conversion API on port 8080.
-*/
+// main.go is responsible for serving the currency conversion api on port 8080.
 package main
 
 import (
@@ -11,9 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-/*
-Route runs a mux Router.
-*/
+// Route runs a mux Router.
 type Route struct {
 	Name        string
 	Method      string
@@ -21,14 +17,10 @@ type Route struct {
 	HandlerFunc http.HandlerFunc
 }
 
-/*
-Routes an array of type Route.
-*/
+// Routes an array of type Route.
 type Routes []Route
 
-/*
-Define the "GET /convert" route.
-*/
+// Define the "GET /convert" route.
 var routes = Routes{
 	Route{
 		"convert",
@@ -38,14 +30,12 @@ var routes = Routes{
 	},
 }
 
-/*
-NewRouter creates a mux router for the routes define above.
-*/
+// NewRouter creates a mux router for the routes define above.
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
 		router.
-		Methods(route.Method).
+			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
 			Handler(route.HandlerFunc)
@@ -57,6 +47,6 @@ func NewRouter() *mux.Router {
 func main() {
 
 	router := NewRouter()
-	// serves http on port 8080.
+	// Serves http on port 8080.
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

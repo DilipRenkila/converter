@@ -28,9 +28,9 @@ that wraps up a call to fixer.io  to return a JSON or XML array of amounts conve
 - `go get github.com/Diggernaut/mxj`
 - `go run main.go`
 
-#### Running tests
+#### Running the tests
 
-- `go run main.go`
+- `go test main.go`
 
 #### Example (json, default)
 
