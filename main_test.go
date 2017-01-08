@@ -76,7 +76,7 @@ func TestConversionToJSON(t *testing.T) {
 	if res.StatusCode != 200 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
 	}else{
-		t.Log("Success, Got 200 for %s",url)
+		t.Logf("Success, Got 200 for %s",url)
 	}
 
 
@@ -95,7 +95,7 @@ func TestConversionToXML(t *testing.T) {
 	if res.StatusCode != 200 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
 	}else{
-		t.Log("Success, Got 200 for %s",url)
+		t.Logf("Success, Got 200 for %s",url)
 	}
 
 }
