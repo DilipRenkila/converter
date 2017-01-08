@@ -72,7 +72,7 @@ func CheckCurrency(s string, dest interface{}) error {
 	if err != nil {
 
 		log.Printf("Error: %v",err)
-		return fmt.Println("Internal Server Error")
+		return fmt.Errorf("Internal Server Error")
 	}
 
 	defer Resp.Body.Close()
@@ -83,19 +83,19 @@ func CheckCurrency(s string, dest interface{}) error {
 
 		if err != nil {
 			log.Printf("Error: %v",err)
-			return fmt.Println("Internal Server Error")
+			return fmt.Errorf("Internal Server Error")
 		}
 
 		defer resp.Body.Close()
 		resp_body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Printf("Error: %v",err)
-			return fmt.Println("Internal Server Error")
+			return fmt.Errorf("Internal Server Error")
 		}
 		x,err := decode(resp_body)
 		if err != nil {
 			log.Printf("Error: %v",err)
-			return fmt.Println("Internal Server Error")
+			return fmt.Errorf("Internal Server Error")
 		}
 		return  fmt.Errorf("Requested Currency type : %s  is not supported. Select from %s", strings.ToUpper(s),KeysToString(x.Rates))
 	}
