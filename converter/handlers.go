@@ -43,9 +43,9 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// checks whether api client has given amount and currency, returns StatusBadRequest if they aren't given.
-	if r.Form.Get("amount") == "" || r.Form.Get("currency") == "" {
-		body["reason"] = "give amount and money in the url query"
+	// checks whether api client has given amount and returns StatusBadRequest if they aren't given.
+	if r.Form.Get("amount") == "" {
+		body["reason"] = "missing arguments amount"
 		w, err = outputWriter(w, body, contentType, http.StatusBadRequest)
 		if err != nil {
 			log.Printf("Error in encoding: %v", err)
@@ -54,6 +54,16 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// checks whether api client has given currency and returns StatusBadRequest if they aren't given.
+	if r.Form.Get("currency") == "" {
+		body["reason"] = "missing arguments currency"
+		w, err = outputWriter(w, body, contentType, http.StatusBadRequest)
+		if err != nil {
+			log.Printf("Error in encoding: %v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
 	money := &Request{}
 
 	// check errors in amount given by api client.
