@@ -3,38 +3,36 @@
 This repository provides an http api written in Golang that takes 
 the price in one currency and converts it to other currencies.
 
-The API provides a single endpoint `/convert?amount=<amount>&currency=<currency>` 
-that wraps up a call to fixer.io API to return a JSON or XML array of amounts converted to other currencies for a given ammount and currency.
+This api provides a single endpoint `/convert?amount=<amount>&currency=<currency>` 
+that wraps up a call to fixer.io  to return a JSON or XML array of amounts converted to other currencies for a given ammount and currency.
 
 ### Project Structure
 
 ```
+├── converter
+│   ├── handlers.go          - provides http handler functions.
+│   ├── httputils.go           - provides XML and JSON wrapper functions. 
+│   └── utils.go                  - provides internal functions for calling the fixer.io API.   
+├── main.go                     - provides the server and handler initalization.
+├── main_test.go
 ├── README.md
-├── internal
-│   └── repos
-│       ├── repos.go         - provides internal functions for calling the GitHub API
-│       └── repos_test.go    - tests the internal function ("mocking" out the GitHub API calls)
-├── main.go                  - provides the server and handler initalization
-└── main_test.go             - tests the handler ("mocking" out the internal function calls)
+└── shipwallet.iml
+
 ```
 
 ### Getting Started
 
+####Install Prerequisites
 - `go get github.com/diliprenkila/converter/converter`
 - `go get github.com/gorilla/mux`
 - `go get github.com/Diggernaut/mxj`
 
+- `go run main.go`
+#### Running tests
 
+- `go run main.go`
 
-### Building code
-
-$ cd shipwallet2 && go build
-
-### Running code
-
-$ ./shipwallet2
-
-### Example (json, default)
+#### Example (json, default)
 
       Request:
 
