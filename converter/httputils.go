@@ -8,7 +8,7 @@ import (
 	"github.com/Diggernaut/mxj"
 )
 
-// returns output in specified format
+// outputWriter writes output to http response in specified format.
 func outputWriter(w http.ResponseWriter, body map[string]interface{}, contentType string, status int) (http.ResponseWriter, error) {
 	// checks for the output version, either in XML or JSON
 	re, err := regexp.Compile(`xml`)
@@ -20,7 +20,7 @@ func outputWriter(w http.ResponseWriter, body map[string]interface{}, contentTyp
 	return w, err
 }
 
-// jsonWriter writes the value v to the http response stream as json with standard json encoding.
+// jsonWriter writes the output to the http response stream as json with standard json encoding.
 func jsonWriter(w http.ResponseWriter, body map[string]interface{}, status int) (http.ResponseWriter, error) {
 
 	w.Header().Set("Content-Type", "application/json")
@@ -29,7 +29,7 @@ func jsonWriter(w http.ResponseWriter, body map[string]interface{}, status int) 
 	return w, err
 }
 
-// xmlWriter writes the value v to the http response stream as xml with standard xml encoding.
+// xmlWriter writes the output to the http response stream as xml with standard xml encoding.
 func xmlWriter(w http.ResponseWriter, body map[string]interface{}, code int) (http.ResponseWriter, error) {
 
 	data, err := mxj.AnyXmlIndentByte(body, "", " ")

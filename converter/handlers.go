@@ -7,9 +7,7 @@ import (
 	"net/http"
 )
 
-/*
-ConvertCurrency is an HTTP handler to construct an HTTP response for route /convert.
-*/
+// ConvertCurrency is a HTTP handler to construct an HTTP response for route /convert.
 func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 
 	// body a map of strings to arbitrary data types used to construct the response.
@@ -17,18 +15,6 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 
 	// contentType stores the first value associated with the given key "Accept" in http request header.
 	contentType := r.Header.Get("Accept")
-
-	// ParseForm parses the raw Request from the URL, returns err if it fails to parse.
-	if err := r.ParseForm(); err != nil {
-		log.Printf("Error parsing form: %s", err)
-		body["reason"] = "Bad request type"
-		w, err = outputWriter(w, body, contentType, http.StatusBadRequest)
-		if err != nil {
-			log.Printf("Error in encoding: %v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
 
 	// Parse the remote client information.
 	addr, proto, err := RestClientIP(r)
@@ -42,7 +28,31 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
 	log.Printf("Request came from: %s by %s", addr, proto)
+
+	// ParseForm parses the raw Request from the URL, returns err if it fails to parse.
+	if err := r.ParseForm(); err != nil {
+		log.Printf("Error parsing form: %s", err)
+		body["reason"] = "Bad request type"
+		w, err = outputWriter(w, body, contentType, http.StatusBadRequest)
+		if err != nil {
+			log.Printf("Error in encoding: %v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// checks whether api client has given amount and currency, returns StatusBadRequest if they aren't given.
+	if r.Form.Get("amount") == "" || r.Form.Get("currency") == "" {
+		body["reason"] = "give amount and money in the url query"
+		w, err = outputWriter(w, body, contentType, http.StatusBadRequest)
+		if err != nil {
+			log.Printf("Error in encoding: %v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
 
 	money := &Request{}
 
@@ -68,7 +78,7 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body,err = RunConversion(money.Amount,money.Currency)
+	body, err = RunConversion(money.Amount, money.Currency)
 	if err != nil {
 
 		log.Printf("%v", err)
@@ -89,7 +99,7 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// RestclientIP parses IP configuration of client, returns IP address of the client,protocol (IPv4 or IPv6) and a error if any.
+// RestClientIP parses IP configuration of client, returns IP address of the client,protocol (IPv4 or IPv6) and a error if any.
 func RestClientIP(r *http.Request) (string, string, error) {
 	var address string
 	var protocol string
@@ -117,5 +127,5 @@ func RestClientIP(r *http.Request) (string, string, error) {
 		protocol = "IPv4"
 	}
 
-	return address,protocol,nil
+	return address, protocol, nil
 }

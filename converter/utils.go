@@ -12,26 +12,27 @@ import (
 	"unicode"
 )
 
+// Request is composed of a amount and currecy used to store from http request.
 type Request struct {
 	Amount   int
 	Currency string
 }
 
-// used to decode json string obtained from fixer.io
-type response struct {
+// Response stores decoded json string obtained from fixer.io.
+type Response struct {
 	Base  string             `json:"base"`
 	Date  string             `json:"date"`
 	Rates map[string]float64 `json:"rates"`
 }
 
-// decodes json string to a struct.
-func decode(r []byte) (x *response, err error) {
-	x = new(response)
+//decodes json string to a struct of type Response.
+func decode(r []byte) (x *Response, err error) {
+	x = new(Response)
 	err = json.Unmarshal(r, x)
 	return
 }
 
-// parses amount from query, returns error if amount is not a number
+// CheckAmount parses amount from query, returns error if amount is not a number
 func CheckAmount(s string, dest interface{}) error {
 	d, ok := dest.(*int)
 	if !ok {
@@ -51,7 +52,7 @@ func CheckCurrency(s string, dest interface{}) error {
 	if !ok {
 		return fmt.Errorf("bad type for currency: %T", dest)
 	}
-	if len(s)!= 3 {
+	if len(s) != 3 {
 		return fmt.Errorf("bad type for currency: %s ; should be a three letter string", s)
 	}
 	for _, r := range s {
@@ -74,7 +75,7 @@ func ret(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
 
-// returns a interface of supported currencies by fixer.io
+// KeysString returns a interface of supported currencies by fixer.io
 func KeysString(m map[string]float64) map[string]interface{} {
 	keys := make([]string, 0, len(m))
 	body := make(map[string]interface{})
@@ -87,7 +88,7 @@ func KeysString(m map[string]float64) map[string]interface{} {
 }
 
 // RunConversion converts the currency by consuming api from fixer.io .
-func RunConversion(amount int, currency string) (map[string]interface{},error) {
+func RunConversion(amount int, currency string) (map[string]interface{}, error) {
 
 	body := make(map[string]interface{})
 	nestedBody := make(map[string]interface{})
@@ -97,20 +98,20 @@ func RunConversion(amount int, currency string) (map[string]interface{},error) {
 	url := fmt.Sprintf("http://api.fixer.io/latest?base=%s", currency)
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Accept", "application/json")
-	resp, err := client.Do(req)
+	Resp, err := client.Do(req)
 	if err != nil {
-		return body,err
+		return body, err
 	}
 
-	defer resp.Body.Close()
-	respBody, err := ioutil.ReadAll(resp.Body)
+	defer Resp.Body.Close()
+	RespBody, err := ioutil.ReadAll(Resp.Body)
 	if err != nil {
-		return body,err
+		return body, err
 	}
 
-	values,err := decode(respBody)
+	values, err := decode(RespBody)
 	if err != nil {
-		return body,err
+		return body, err
 	}
 
 	body["amount"] = amount
@@ -120,5 +121,5 @@ func RunConversion(amount int, currency string) (map[string]interface{},error) {
 		nestedBody[currencyType] = strconv.FormatFloat(round(float64(amount)*rate, 2), 'f', -1, 64)
 	}
 	body["converted"] = nestedBody
-	return body,nil
+	return body, nil
 }
