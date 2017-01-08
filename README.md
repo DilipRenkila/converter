@@ -1,12 +1,30 @@
-## Description
+## Currency Converter
 
-I implemeted the api both in xml and json by incorporating the feedback provided by you guys and by making the code reusable and readable.
+This repository provides an http api written in Golang that takes 
+the price in one currency and converts it to other currencies.
 
-###Installing Prerequistes
+The API provides a single endpoint `/convert?amount=<amount>&currency=<currency>` 
+that wraps up a call to fixer.io API to return a JSON or XML array of amounts converted to other currencies for a given ammount and currency.
 
-$ go get "github.com/gorilla/mux"
+### Project Structure
 
-$ go get "github.com/Diggernaut/mxj"
+```
+├── README.md
+├── internal
+│   └── repos
+│       ├── repos.go         - provides internal functions for calling the GitHub API
+│       └── repos_test.go    - tests the internal function ("mocking" out the GitHub API calls)
+├── main.go                  - provides the server and handler initalization
+└── main_test.go             - tests the handler ("mocking" out the internal function calls)
+```
+
+### Getting Started
+
+- `go get github.com/diliprenkila/converter/converter`
+- `go get github.com/gorilla/mux`
+- `go get github.com/Diggernaut/mxj`
+
+
 
 ### Building code
 
@@ -126,4 +144,4 @@ $ ./shipwallet2
 My solution handles errors effectively by either returning 400 or 500 status codes.
 
 If there is a connection problem like your server is unable to reach http://fixer.io/ or it exceeds timeout of 5 seconds, it responses with Internal error status.
-        
+ 
