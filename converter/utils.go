@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,7 +13,7 @@ import (
 	"unicode"
 )
 
-// Request is composed of a amount and currecy used to store from http request.
+// Request is composed of a amount and currency used to store from http request.
 type Request struct {
 	Amount   int
 	Currency string
@@ -122,4 +123,35 @@ func RunConversion(amount int, currency string) (map[string]interface{}, error) 
 	}
 	body["converted"] = nestedBody
 	return body, nil
+}
+
+// RestClientIP parses IP configuration of client, returns IP address of the client,protocol (IPv4 or IPv6) and a error if any.
+func RestClientIP(r *http.Request) (string, string, error) {
+	var address string
+	var protocol string
+
+	viaProxy := r.Header.Get("X-Forwarded-For")
+	if viaProxy != "" {
+		address = viaProxy
+	} else {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err == nil {
+			address = host
+		} else {
+			address = r.RemoteAddr
+		}
+	}
+
+	ip := net.ParseIP(address)
+	if ip == nil {
+		return "", "", fmt.Errorf("Invalid address: %s", address)
+	}
+
+	if ip.To4() == nil {
+		protocol = "IPv6"
+	} else {
+		protocol = "IPv4"
+	}
+
+	return address, protocol, nil
 }

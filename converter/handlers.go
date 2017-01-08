@@ -3,7 +3,6 @@ package converter
 import (
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 )
 
@@ -107,35 +106,4 @@ func ConvertCurrency(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	return
-}
-
-// RestClientIP parses IP configuration of client, returns IP address of the client,protocol (IPv4 or IPv6) and a error if any.
-func RestClientIP(r *http.Request) (string, string, error) {
-	var address string
-	var protocol string
-
-	viaProxy := r.Header.Get("X-Forwarded-For")
-	if viaProxy != "" {
-		address = viaProxy
-	} else {
-		host, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err == nil {
-			address = host
-		} else {
-			address = r.RemoteAddr
-		}
-	}
-
-	ip := net.ParseIP(address)
-	if ip == nil {
-		return "", "", fmt.Errorf("Invalid address: %s", address)
-	}
-
-	if ip.To4() == nil {
-		protocol = "IPv6"
-	} else {
-		protocol = "IPv4"
-	}
-
-	return address, protocol, nil
 }
