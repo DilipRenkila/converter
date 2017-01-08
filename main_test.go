@@ -38,7 +38,8 @@ func TestArguments(t *testing.T) {
 		if res.StatusCode != 400 {
 			t.Errorf("Bad Request Type expected: %d", res.StatusCode)
 		}else{
-			t.Log("Success, Got 400")
+			t.Logf("Success, Got 400 for %s",url)
+
 		}
 	}
 
@@ -57,7 +58,7 @@ func TestConversionUnsupportedCurrency(t *testing.T) {
 	if res.StatusCode != 400 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
 	}else{
-		t.Log("Success, Got 400")
+		t.Logf("Success, Got 400 for %s",url)
 	}
 
 }
@@ -75,7 +76,7 @@ func TestConversionToJSON(t *testing.T) {
 	if res.StatusCode != 200 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
 	}else{
-		t.Log("Success, Got 200")
+		t.Log("Success, Got 200 for %s",url)
 	}
 
 
@@ -94,7 +95,7 @@ func TestConversionToXML(t *testing.T) {
 	if res.StatusCode != 200 {
 		t.Errorf("Error status code : %d is not expected", res.StatusCode)
 	}else{
-		t.Log("Success, Got 200")
+		t.Log("Success, Got 200 for %s",url)
 	}
 
 }
