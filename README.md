@@ -32,7 +32,7 @@ that wraps up a call to fixer.io  to return a JSON or XML array of amounts conve
 
 - `go test -v`
 
-#### Example Usage (JSON)
+#### Example (JSON)
 
       Request:
 
