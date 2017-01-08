@@ -11,9 +11,9 @@ that wraps up a call to fixer.io  to return a JSON or XML array of amounts conve
 ```
 ├── converter
 │   ├── handlers.go          - provides http handler functions.
-│   ├── httputils.go           - provides XML and JSON wrapper functions. 
-│   └── utils.go                  - provides internal functions for calling the fixer.io API.   
-├── main.go                     - provides the server and handler initalization.
+│   ├── httputils.go         - provides XML and JSON wrapper functions. 
+│   └── utils.go             - provides internal functions for calling the fixer.io API.   
+├── main.go                  - provides the server and handler initalization.
 ├── main_test.go
 ├── README.md
 └── shipwallet.iml
@@ -26,8 +26,8 @@ that wraps up a call to fixer.io  to return a JSON or XML array of amounts conve
 - `go get github.com/diliprenkila/converter/converter`
 - `go get github.com/gorilla/mux`
 - `go get github.com/Diggernaut/mxj`
-
 - `go run main.go`
+
 #### Running tests
 
 - `go run main.go`
